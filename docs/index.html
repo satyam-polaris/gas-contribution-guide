@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Git Branching Guide — Team Handbook</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0d1117;
@@ -21,32 +20,18 @@
     --accent5: #ffa657;
     --danger: #f85149;
     --warning: #e3b341;
-    --blue: #1f6feb;
-    --green: #238636;
-    --purple: #6e40c9;
-    --orange: #bd561d;
     --tag-bg: #21262d;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.7;
-    font-size: 15px;
-  }
+  body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+
   .hero {
     background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1f29 100%);
     border-bottom: 1px solid var(--border);
-    padding: 60px 40px 50px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+    padding: 60px 40px 50px; text-align: center; position: relative; overflow: hidden;
   }
   .hero::before {
-    content: '';
-    position: absolute;
-    top: -60px; left: 50%; transform: translateX(-50%);
+    content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
     width: 600px; height: 300px;
     background: radial-gradient(ellipse, rgba(88,166,255,0.08) 0%, transparent 70%);
     pointer-events: none;
@@ -59,243 +44,139 @@
     padding: 4px 12px; margin-bottom: 20px; text-transform: uppercase;
   }
   .hero h1 {
-    font-family: 'Sora', sans-serif;
-    font-size: 42px; font-weight: 700;
+    font-family: Georgia, serif; font-size: 42px; font-weight: 700;
     background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     margin-bottom: 16px; line-height: 1.2;
   }
-  .hero p {
-    color: var(--muted); font-size: 17px; max-width: 560px; margin: 0 auto 32px;
-  }
-  .hero-meta {
-    display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
-  }
-  .meta-item {
-    display: flex; align-items: center; gap: 6px;
-    color: var(--muted); font-size: 13px;
-  }
+  .hero p { color: var(--muted); font-size: 17px; max-width: 580px; margin: 0 auto 32px; }
+  .hero-meta { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+  .meta-item { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
   .meta-dot { width: 8px; height: 8px; border-radius: 50%; }
   .dot-blue { background: var(--accent); }
   .dot-green { background: var(--accent2); }
   .dot-orange { background: var(--accent5); }
+  .dot-red { background: var(--danger); }
 
   .container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
 
-  /* Nav */
   .toc {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px 28px;
-    margin: 40px auto;
-    max-width: 900px;
-    margin-left: 32px; margin-right: 32px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px;
+    max-width: 900px; margin: 40px auto;
   }
-  .toc h3 {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--muted); margin-bottom: 14px; font-weight: 600;
-  }
-  .toc-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;
-  }
-  .toc a {
-    display: flex; align-items: center; gap: 8px;
-    color: var(--accent); text-decoration: none;
-    font-size: 13px; padding: 6px 10px; border-radius: 6px;
-    transition: background 0.15s;
-  }
+  .toc h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px; font-weight: 600; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .toc a { display: flex; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; font-size: 13px; padding: 6px 10px; border-radius: 6px; transition: background 0.15s; }
   .toc a:hover { background: rgba(88,166,255,0.1); }
-  .toc-num { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .toc-num { color: var(--muted); font-family: 'Courier New', monospace; font-size: 11px; }
 
-  /* Section */
   section { padding: 56px 0; border-bottom: 1px solid var(--border2); }
-  .section-label {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--muted); margin-bottom: 12px;
-  }
-  .section-num {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--accent); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 700;
-  }
-  h2 {
-    font-family: 'Sora', sans-serif;
-    font-size: 28px; font-weight: 700; margin-bottom: 16px; color: var(--text);
-  }
+  .section-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 12px; }
+  .section-num { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+  .section-num.red { background: var(--danger); }
+  h2 { font-family: Georgia, serif; font-size: 28px; font-weight: 700; margin-bottom: 16px; color: var(--text); }
   h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: var(--text); }
+  h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
   p { color: #c9d1d9; margin-bottom: 14px; }
   strong { color: var(--text); font-weight: 600; }
 
-  /* Alert boxes */
-  .alert {
-    border-radius: 8px; padding: 14px 18px; margin: 20px 0;
-    border-left: 3px solid; font-size: 14px;
-  }
+  .alert { border-radius: 8px; padding: 14px 18px; margin: 20px 0; border-left: 3px solid; font-size: 14px; }
   .alert-danger { background: rgba(248,81,73,0.08); border-color: var(--danger); color: #ff7b72; }
   .alert-warning { background: rgba(227,179,65,0.08); border-color: var(--warning); color: #e3b341; }
   .alert-success { background: rgba(63,185,80,0.08); border-color: var(--accent2); color: var(--accent2); }
   .alert-info { background: rgba(88,166,255,0.08); border-color: var(--accent); color: var(--accent); }
   .alert strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
 
-  /* Code blocks */
   pre {
     background: #010409; border: 1px solid var(--border);
     border-radius: 8px; padding: 20px 22px; overflow-x: auto;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    font-family: 'Courier New', monospace; font-size: 13px;
     line-height: 1.7; margin: 16px 0;
   }
-  code { font-family: 'JetBrains Mono', monospace; }
+  code { font-family: 'Courier New', monospace; }
   .inline-code {
     background: rgba(110,64,201,0.15); border: 1px solid rgba(110,64,201,0.3);
     color: var(--accent4); border-radius: 4px; padding: 1px 7px;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    font-family: 'Courier New', monospace; font-size: 13px;
   }
-  .cmd-line { color: #8b949e; }
   .cmd-comment { color: #6e7681; font-style: italic; }
-  .cmd-key { color: #58a6ff; }
   .cmd-val { color: #3fb950; }
   .cmd-warn { color: #f78166; }
   .cmd-git { color: #ffa657; }
 
-  /* Diagrams */
   .diagram-wrap {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 32px 24px; margin: 28px 0;
-    overflow-x: auto;
+    border-radius: 12px; padding: 32px 24px; margin: 28px 0; overflow-x: auto;
   }
   .diagram-title {
     font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
     color: var(--muted); font-weight: 600; margin-bottom: 20px;
     display: flex; align-items: center; gap: 8px;
   }
-  .diagram-title::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-  svg text { font-family: 'JetBrains Mono', monospace; }
+  .diagram-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  svg text { font-family: 'Courier New', monospace; }
 
-  /* Rules grid */
   .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
   @media (max-width: 640px) { .rules-grid { grid-template-columns: 1fr; } }
-  .rule-card {
-    background: var(--surface2); border: 1px solid var(--border2);
-    border-radius: 10px; padding: 18px 20px;
-  }
+  .rule-card { background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 18px 20px; }
   .rule-card.do { border-left: 3px solid var(--accent2); }
   .rule-card.dont { border-left: 3px solid var(--danger); }
-  .rule-header {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; margin-bottom: 10px;
-  }
+  .rule-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
   .rule-card.do .rule-header { color: var(--accent2); }
   .rule-card.dont .rule-header { color: var(--danger); }
-  .rule-item {
-    display: flex; align-items: flex-start; gap: 8px;
-    font-size: 13px; color: #c9d1d9; margin-bottom: 8px;
-  }
+  .rule-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #c9d1d9; margin-bottom: 8px; }
   .rule-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
 
-  /* Steps */
   .steps { counter-reset: step; margin: 20px 0; }
-  .step {
-    display: flex; gap: 20px; margin-bottom: 28px; position: relative;
-  }
+  .step { display: flex; gap: 20px; margin-bottom: 28px; }
   .step::before {
-    counter-increment: step;
-    content: counter(step);
-    flex-shrink: 0;
-    width: 32px; height: 32px; border-radius: 50%;
+    counter-increment: step; content: counter(step);
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
     background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3);
     color: var(--accent); font-weight: 700; font-size: 13px;
     display: flex; align-items: center; justify-content: center;
   }
-  .step-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
   .step-content p { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
 
-  /* Branch visual */
   .branch-pill {
     display: inline-flex; align-items: center; gap: 6px;
     border-radius: 20px; padding: 3px 10px; font-size: 12px;
-    font-family: 'JetBrains Mono', monospace; font-weight: 500;
-    border: 1px solid;
+    font-family: 'Courier New', monospace; font-weight: 500; border: 1px solid;
   }
-  .branch-main { background: rgba(248,81,73,0.1); border-color: rgba(248,81,73,0.4); color: #ff7b72; }
+  .branch-prod  { background: rgba(248,81,73,0.1);  border-color: rgba(248,81,73,0.4);  color: #ff7b72; }
   .branch-staging { background: rgba(227,179,65,0.1); border-color: rgba(227,179,65,0.4); color: #e3b341; }
-  .branch-dev { background: rgba(63,185,80,0.1); border-color: rgba(63,185,80,0.4); color: var(--accent2); }
-  .branch-feat { background: rgba(88,166,255,0.1); border-color: rgba(88,166,255,0.4); color: var(--accent); }
-  .branch-fork { background: rgba(210,168,255,0.1); border-color: rgba(210,168,255,0.4); color: var(--accent4); }
+  .branch-dev   { background: rgba(63,185,80,0.1);  border-color: rgba(63,185,80,0.4);  color: var(--accent2); }
+  .branch-feat  { background: rgba(88,166,255,0.1); border-color: rgba(88,166,255,0.4); color: var(--accent); }
+  .branch-fork  { background: rgba(210,168,255,0.1);border-color: rgba(210,168,255,0.4);color: var(--accent4); }
 
-  /* Quick ref table */
   table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
-  th {
-    text-align: left; padding: 10px 14px;
-    background: var(--surface2); color: var(--muted);
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-    border-bottom: 1px solid var(--border);
-  }
+  th { text-align: left; padding: 10px 14px; background: var(--surface2); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
   td { padding: 12px 14px; border-bottom: 1px solid var(--border2); color: #c9d1d9; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
 
-  /* Checklist */
   .checklist { list-style: none; margin: 16px 0; }
-  .checklist li {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 14px; border-radius: 8px; margin-bottom: 4px;
-    font-size: 14px; transition: background 0.1s;
-  }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 8px; margin-bottom: 4px; font-size: 14px; transition: background 0.1s; cursor: pointer; }
   .checklist li:hover { background: var(--surface2); }
-  .check-box {
-    width: 18px; height: 18px; border: 1.5px solid var(--border);
-    border-radius: 4px; flex-shrink: 0; margin-top: 1px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
+  .check-box { width: 18px; height: 18px; border: 1.5px solid var(--border); border-radius: 4px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
   .check-box.checked { background: var(--accent2); border-color: var(--accent2); }
   .check-box.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
 
-  /* Tag row */
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
-  .tag {
-    background: var(--tag-bg); border: 1px solid var(--border);
-    color: var(--muted); border-radius: 6px; padding: 4px 10px;
-    font-size: 12px; font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* Timeline */
-  .timeline { position: relative; margin: 28px 0; padding-left: 28px; }
-  .timeline::before {
-    content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px;
-    width: 2px; background: var(--border);
-  }
-  .timeline-item { position: relative; margin-bottom: 24px; }
-  .timeline-dot {
-    position: absolute; left: -24px; top: 4px;
-    width: 12px; height: 12px; border-radius: 50%;
-    background: var(--surface); border: 2px solid var(--accent); z-index: 1;
-  }
-  .timeline-dot.green { border-color: var(--accent2); }
-  .timeline-dot.orange { border-color: var(--accent5); }
-  .timeline-dot.red { border-color: var(--danger); }
-  .timeline-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .timeline-item p { font-size: 13px; color: var(--muted); }
-
-  /* Summary card */
   .summary-card {
     background: linear-gradient(135deg, rgba(88,166,255,0.05) 0%, rgba(110,64,201,0.05) 100%);
-    border: 1px solid rgba(88,166,255,0.2);
-    border-radius: 12px; padding: 28px 32px; margin: 32px 0;
+    border: 1px solid rgba(88,166,255,0.2); border-radius: 12px; padding: 28px 32px; margin: 32px 0;
   }
   .summary-card h3 { color: var(--accent); font-size: 16px; margin: 0 0 16px; }
 
-  footer {
-    text-align: center; padding: 48px 32px;
-    color: var(--muted); font-size: 13px;
-    border-top: 1px solid var(--border2);
+  /* Special callout for prod section */
+  .prod-callout {
+    background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.25);
+    border-radius: 12px; padding: 24px 28px; margin: 28px 0;
   }
-  footer a { color: var(--accent); text-decoration: none; }
+  .prod-callout h4 { color: #ff7b72; margin-bottom: 8px; }
+
+  footer { text-align: center; padding: 48px 32px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border2); }
 </style>
 </head>
 <body>
@@ -304,11 +185,12 @@
 <div class="hero">
   <div class="hero-badge">📖 Team Handbook</div>
   <h1>Git Branching Guide</h1>
-  <p>How your team syncs forks, writes clean history, and ships without chaos.</p>
+  <p>How we sync our forks, write clean history, and ship without chaos — from our fork all the way through to upstream prod.</p>
   <div class="hero-meta">
-    <div class="meta-item"><div class="meta-dot dot-blue"></div> Fork workflow</div>
-    <div class="meta-item"><div class="meta-dot dot-green"></div> Squash & rebase</div>
-    <div class="meta-item"><div class="meta-dot dot-orange"></div> PR rules</div>
+    <div class="meta-item"><div class="meta-dot dot-blue"></div> Fork → upstream dev</div>
+    <div class="meta-item"><div class="meta-dot dot-green"></div> Squash &amp; rebase</div>
+    <div class="meta-item"><div class="meta-dot dot-orange"></div> Dev → staging → prod</div>
+    <div class="meta-item"><div class="meta-dot dot-red"></div> Prod sync &amp; debug</div>
   </div>
 </div>
 
@@ -316,305 +198,297 @@
 <div class="toc" style="max-width:900px;margin:40px auto;">
   <h3>Contents</h3>
   <div class="toc-grid">
-    <a href="#why"><span class="toc-num">01</span> Why the history explodes</a>
-    <a href="#model"><span class="toc-num">02</span> Branch model overview</a>
-    <a href="#sync"><span class="toc-num">03</span> Syncing your fork</a>
-    <a href="#pr-flow"><span class="toc-num">04</span> The PR flow</a>
-    <a href="#rules"><span class="toc-num">05</span> Team rules</a>
-    <a href="#pr-checklist"><span class="toc-num">06</span> PR checklist</a>
-    <a href="#faq"><span class="toc-num">07</span> FAQ / troubleshooting</a>
+    <a href="#why"><span class="toc-num">01</span> Why our history explodes</a>
+    <a href="#model"><span class="toc-num">02</span> Our branch model</a>
+    <a href="#sync"><span class="toc-num">03</span> Syncing our forks</a>
+    <a href="#pr-flow"><span class="toc-num">04</span> The full PR flow</a>
+    <a href="#promote"><span class="toc-num">05</span> Promoting to staging &amp; prod</a>
+    <a href="#prod-sync"><span class="toc-num">06</span> Keeping fork/prod in sync</a>
+    <a href="#rules"><span class="toc-num">07</span> Team rules</a>
+    <a href="#pr-checklist"><span class="toc-num">08</span> PR checklist</a>
+    <a href="#faq"><span class="toc-num">09</span> FAQ &amp; troubleshooting</a>
   </div>
 </div>
 
-<!-- SECTION 1: WHY -->
 <div class="container">
+
+<!-- SECTION 1: WHY -->
 <section id="why">
   <div class="section-label"><div class="section-num">1</div> Root cause</div>
-  <h2>Why you're seeing 40–50 commits on staging</h2>
-  <p>When you click GitHub's "Sync Fork" button, it creates a <strong>merge commit</strong> that pulls in all upstream history. Those commits get new SHA identifiers in your fork. When you eventually open a PR to staging, Git sees them as brand-new commits — even though the code is identical — and dumps all of them into the PR diff.</p>
+  <h2>Why we're seeing 40–50 commits when we merge to staging</h2>
+  <p>When we use GitHub's "Sync Fork" button, it creates a <strong>merge commit</strong> that pulls all upstream history into our fork. Those commits get brand-new SHA identifiers in our fork even though the code is identical. When we then open a PR from upstream development → staging, Git treats all of them as new commits and dumps them into the PR diff.</p>
 
   <div class="diagram-wrap">
-    <div class="diagram-title">Root cause — commit SHA explosion</div>
-    <svg width="100%" viewBox="0 0 820 320" xmlns="http://www.w3.org/2000/svg">
-      <!-- Upstream row -->
-      <text x="20" y="52" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">UPSTREAM</text>
-      <circle cx="120" cy="80" r="16" fill="#1f6feb" stroke="#58a6ff" stroke-width="1.5"/>
-      <text x="120" y="84" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="JetBrains Mono,monospace">A</text>
-      <line x1="136" y1="80" x2="188" y2="80" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
-      <circle cx="204" cy="80" r="16" fill="#1f6feb" stroke="#58a6ff" stroke-width="1.5"/>
-      <text x="204" y="84" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="JetBrains Mono,monospace">B</text>
-      <line x1="220" y1="80" x2="272" y2="80" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
-      <circle cx="288" cy="80" r="16" fill="#1f6feb" stroke="#58a6ff" stroke-width="1.5"/>
-      <text x="288" y="84" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="JetBrains Mono,monospace">C</text>
-      <text x="288" y="112" text-anchor="middle" font-size="10" fill="#e3b341" font-family="JetBrains Mono,monospace">upstream</text>
-
-      <!-- Fork row -->
-      <text x="20" y="182" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">YOUR FORK</text>
-      <circle cx="120" cy="210" r="16" fill="#238636" stroke="#3fb950" stroke-width="1.5"/>
-      <text x="120" y="214" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="JetBrains Mono,monospace">A'</text>
-      <line x1="136" y1="210" x2="188" y2="210" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
-      <circle cx="204" cy="210" r="16" fill="#238636" stroke="#3fb950" stroke-width="1.5"/>
-      <text x="204" y="214" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="JetBrains Mono,monospace">B'</text>
-      <line x1="220" y1="210" x2="272" y2="210" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
-      <!-- Merge commit -->
-      <circle cx="288" cy="210" r="16" fill="#bd561d" stroke="#f78166" stroke-width="2"/>
-      <text x="288" y="214" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="JetBrains Mono,monospace">M</text>
-      <text x="288" y="238" text-anchor="middle" font-size="10" fill="#f78166" font-family="JetBrains Mono,monospace">merge commit!</text>
-      <!-- Arrow from upstream C to fork M -->
-      <path d="M 288 96 L 288 190" stroke="#f78166" stroke-width="1.5" stroke-dasharray="4,3" fill="none" marker-end="url(#arr-r)"/>
-      <text x="300" y="150" font-size="10" fill="#f78166" font-family="JetBrains Mono,monospace">Sync Fork button</text>
-
-      <!-- Staging sees all commits -->
-      <line x1="304" y1="210" x2="400" y2="210" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
-      <rect x="400" y="185" width="200" height="50" rx="8" fill="rgba(248,81,73,0.1)" stroke="#f85149" stroke-width="1"/>
-      <text x="500" y="207" text-anchor="middle" font-size="11" fill="#ff7b72" font-family="JetBrains Mono,monospace">PR to staging:</text>
-      <text x="500" y="223" text-anchor="middle" font-size="11" fill="#ff7b72" font-family="JetBrains Mono,monospace">"50 commits" 😱</text>
-
+    <div class="diagram-title">What goes wrong — the SHA explosion</div>
+    <svg width="100%" viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b949e" stroke-width="1.5"/></marker>
-        <marker id="arr-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#f85149" stroke-width="1.5"/></marker>
+        <marker id="arrr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#f85149" stroke-width="1.5"/></marker>
       </defs>
-
+      <!-- Upstream row -->
+      <text x="20" y="52" font-size="11" fill="#6e7681">UPSTREAM/development</text>
+      <circle cx="130" cy="80" r="16" fill="#1f6feb" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="130" y="84" text-anchor="middle" font-size="9" fill="#e6edf3">A</text>
+      <line x1="146" y1="80" x2="198" y2="80" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <circle cx="214" cy="80" r="16" fill="#1f6feb" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="214" y="84" text-anchor="middle" font-size="9" fill="#e6edf3">B</text>
+      <line x1="230" y1="80" x2="282" y2="80" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <circle cx="298" cy="80" r="16" fill="#1f6feb" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="298" y="84" text-anchor="middle" font-size="9" fill="#e6edf3">C</text>
+      <text x="298" y="112" text-anchor="middle" font-size="10" fill="#e3b341">upstream</text>
+      <!-- Fork row -->
+      <text x="20" y="172" font-size="11" fill="#6e7681">YOUR FORK/development</text>
+      <circle cx="130" cy="200" r="16" fill="#238636" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="130" y="204" text-anchor="middle" font-size="9" fill="#e6edf3">A'</text>
+      <line x1="146" y1="200" x2="198" y2="200" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <circle cx="214" cy="200" r="16" fill="#238636" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="214" y="204" text-anchor="middle" font-size="9" fill="#e6edf3">B'</text>
+      <line x1="230" y1="200" x2="282" y2="200" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <circle cx="298" cy="200" r="16" fill="#bd561d" stroke="#f78166" stroke-width="2"/>
+      <text x="298" y="204" text-anchor="middle" font-size="9" fill="#e6edf3">M</text>
+      <text x="298" y="228" text-anchor="middle" font-size="10" fill="#f78166">merge commit!</text>
+      <!-- Arrow showing sync fork -->
+      <path d="M 298 96 L 298 180" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,3" fill="none" marker-end="url(#arrr)"/>
+      <text x="308" y="145" font-size="10" fill="#f85149">"Sync Fork" button</text>
+      <!-- Result -->
+      <line x1="314" y1="200" x2="410" y2="200" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="410" y="175" width="220" height="50" rx="8" fill="rgba(248,81,73,0.1)" stroke="#f85149" stroke-width="1"/>
+      <text x="520" y="196" text-anchor="middle" font-size="11" fill="#ff7b72">PR to upstream staging:</text>
+      <text x="520" y="213" text-anchor="middle" font-size="11" fill="#ff7b72">"50 commits shown" 😱</text>
       <!-- Legend -->
-      <circle cx="620" cy="80" r="8" fill="#1f6feb" stroke="#58a6ff" stroke-width="1"/>
-      <text x="636" y="84" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">Upstream commit (sha: abc)</text>
-      <circle cx="620" cy="108" r="8" fill="#238636" stroke="#3fb950" stroke-width="1"/>
-      <text x="636" y="112" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">Fork commit (sha: def ≠ abc)</text>
-      <circle cx="620" cy="136" r="8" fill="#bd561d" stroke="#f78166" stroke-width="1"/>
-      <text x="636" y="140" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">Merge commit (new sha!)</text>
+      <circle cx="650" cy="80" r="7" fill="#1f6feb" stroke="#58a6ff" stroke-width="1"/>
+      <text x="664" y="84" font-size="11" fill="#8b949e">Upstream commit (sha: abc123)</text>
+      <circle cx="650" cy="106" r="7" fill="#238636" stroke="#3fb950" stroke-width="1"/>
+      <text x="664" y="110" font-size="11" fill="#8b949e">Fork commit (sha: def456 ≠ abc)</text>
+      <circle cx="650" cy="132" r="7" fill="#bd561d" stroke="#f78166" stroke-width="1"/>
+      <text x="664" y="136" font-size="11" fill="#8b949e">Merge commit (new sha!)</text>
     </svg>
   </div>
 
-  <p>Three things make this worse together:</p>
-  <ol style="padding-left:20px; color:#c9d1d9; margin-bottom:14px; font-size:14px; line-height:2;">
-    <li><strong>Sync Fork creates merge commits</strong> — GitHub's button does a merge, not a rebase.</li>
-    <li><strong>staging drifted from development</strong> — letting them diverge for days/weeks means a huge catch-up dump later.</li>
-    <li><strong>No commit squashing</strong> — every tiny WIP commit piles up into the PR history.</li>
+  <p>Three things combine to cause this:</p>
+  <ol style="padding-left:20px;color:#c9d1d9;margin-bottom:14px;font-size:14px;line-height:2.2;">
+    <li><strong>We're using "Sync Fork" instead of rebase</strong> — that button does a merge under the hood, creating extra commits.</li>
+    <li><strong>Staging has drifted from development</strong> — the longer we leave the gap, the bigger the commit flood when we finally merge.</li>
+    <li><strong>We're not squashing PR commits</strong> — every WIP commit piles up and makes the history unreadable.</li>
   </ol>
   <div class="alert alert-info">
-    <strong>The fix is simple</strong>
-    Rebase instead of merge when syncing. Squash commits in PRs. Merge development → staging frequently (not in big batches).
+    <strong>The fix</strong>
+    Rebase instead of merge when syncing our forks. Squash commits in PRs. Promote development → staging → prod regularly, not in big batches.
   </div>
 </section>
 
 <!-- SECTION 2: BRANCH MODEL -->
 <section id="model">
   <div class="section-label"><div class="section-num">2</div> Branch model</div>
-  <h2>How your branches should flow</h2>
-  <p>Your repo has three long-lived branches. Think of them as environments, not just code containers.</p>
+  <h2>Our branch model — how everything connects</h2>
+  <p>We have <strong>no main branch</strong> in our workflow. Our three long-lived branches in upstream each map to a real server environment. Our forks mirror those same branches, and all our work flows from our fork upward into upstream.</p>
 
-  <div style="display:flex; gap:12px; flex-wrap:wrap; margin:20px 0 28px;">
-    <div class="branch-pill branch-main">⬤ main</div>
-    <span style="color:var(--muted); align-self:center;">→ production</span>
-    <div class="branch-pill branch-staging">⬤ staging</div>
-    <span style="color:var(--muted); align-self:center;">→ pre-prod / QA</span>
-    <div class="branch-pill branch-dev">⬤ development</div>
-    <span style="color:var(--muted); align-self:center;">→ integration branch</span>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 28px;align-items:center;">
     <div class="branch-pill branch-feat">⬤ feature/xyz</div>
-    <span style="color:var(--muted); align-self:center;">→ short-lived, yours</span>
+    <span style="color:var(--muted);">→</span>
+    <div class="branch-pill branch-dev">⬤ upstream/development</div>
+    <span style="color:var(--muted);">→</span>
+    <div class="branch-pill branch-staging">⬤ upstream/staging</div>
+    <span style="color:var(--muted);">→</span>
+    <div class="branch-pill branch-prod">⬤ upstream/prod</div>
   </div>
 
   <div class="diagram-wrap">
-    <div class="diagram-title">Correct flow — arrows show merge direction</div>
-    <svg width="100%" viewBox="0 0 820 440" xmlns="http://www.w3.org/2000/svg">
+    <div class="diagram-title">Full flow — our forks to upstream environments</div>
+    <svg width="100%" viewBox="0 0 820 500" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b949e" stroke-width="1.5"/></marker>
         <marker id="a2g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#3fb950" stroke-width="1.5"/></marker>
         <marker id="a2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#58a6ff" stroke-width="1.5"/></marker>
-        <marker id="a2r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#f85149" stroke-width="1.5"/></marker>
         <marker id="a2y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#e3b341" stroke-width="1.5"/></marker>
+        <marker id="a2r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#f85149" stroke-width="1.5"/></marker>
         <marker id="a2p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#d2a8ff" stroke-width="1.5"/></marker>
       </defs>
 
-      <!-- UPSTREAM -->
-      <rect x="10" y="20" width="120" height="36" rx="8" fill="rgba(248,81,73,0.12)" stroke="#f85149" stroke-width="1"/>
-      <text x="70" y="43" text-anchor="middle" font-size="13" fill="#ff7b72" font-weight="600" font-family="JetBrains Mono,monospace">upstream/main</text>
-      <text x="70" y="72" text-anchor="middle" font-size="10" fill="#6e7681" font-family="JetBrains Mono,monospace">production</text>
+      <!-- OUR FORK column (left) -->
+      <text x="30" y="30" font-size="11" fill="#d2a8ff" font-weight="600">OUR FORK</text>
+      <rect x="20" y="40" width="160" height="36" rx="8" fill="rgba(210,168,255,0.08)" stroke="rgba(210,168,255,0.3)" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="100" y="63" text-anchor="middle" font-size="12" fill="#d2a8ff">fork/development</text>
 
-      <!-- Arrow down: upstream → fork/main (rebase) -->
-      <path d="M 70 56 L 70 108" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#a2p)"/>
-      <text x="78" y="88" font-size="10" fill="#d2a8ff" font-family="JetBrains Mono,monospace">git fetch + rebase</text>
+      <!-- feature branches hang off fork -->
+      <rect x="20" y="105" width="74" height="30" rx="6" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="57" y="124" text-anchor="middle" font-size="10" fill="#58a6ff">feature/A</text>
+      <rect x="106" y="105" width="74" height="30" rx="6" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="143" y="124" text-anchor="middle" font-size="10" fill="#58a6ff">feature/B</text>
+      <line x1="57" y1="105" x2="80" y2="76" stroke="#58a6ff" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="143" y1="105" x2="120" y2="76" stroke="#58a6ff" stroke-width="1" stroke-dasharray="3,2"/>
 
-      <!-- FORK MAIN -->
-      <rect x="10" y="110" width="120" height="36" rx="8" fill="rgba(248,81,73,0.08)" stroke="#f85149" stroke-width="1"/>
-      <text x="70" y="133" text-anchor="middle" font-size="13" fill="#ff7b72" font-weight="600" font-family="JetBrains Mono,monospace">fork/main</text>
+      <!-- fork/prod (for debugging) -->
+      <rect x="20" y="160" width="160" height="36" rx="8" fill="rgba(248,81,73,0.06)" stroke="rgba(248,81,73,0.25)" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="100" y="178" text-anchor="middle" font-size="11" fill="#ff7b72">fork/prod</text>
+      <text x="100" y="193" text-anchor="middle" font-size="10" fill="#6e7681">(read-only debug)</text>
 
-      <!-- Arrow down: fork/main → staging (when ready) -->
-      <path d="M 70 146 L 70 204" stroke="#e3b341" stroke-width="1.5" fill="none" marker-end="url(#a2y)"/>
-      <text x="78" y="182" font-size="10" fill="#e3b341" font-family="JetBrains Mono,monospace">keep in sync</text>
+      <!-- sync arrow fork/prod ← upstream/prod -->
+      <path d="M 490 248 Q 290 248 182 185" stroke="#f85149" stroke-width="1" stroke-dasharray="5,3" fill="none" marker-end="url(#a2r)"/>
+      <text x="310" y="268" font-size="10" fill="#f85149">git fetch upstream + reset --hard</text>
 
-      <!-- STAGING -->
-      <rect x="10" y="206" width="120" height="36" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1"/>
-      <text x="70" y="229" text-anchor="middle" font-size="13" fill="#e3b341" font-weight="600" font-family="JetBrains Mono,monospace">staging</text>
-      <text x="70" y="258" text-anchor="middle" font-size="10" fill="#6e7681" font-family="JetBrains Mono,monospace">QA / pre-prod</text>
+      <!-- UPSTREAM column (right) -->
+      <text x="350" y="30" font-size="11" fill="#8b949e" font-weight="600">UPSTREAM REPO</text>
 
-      <!-- Arrow down: staging → development -->
-      <path d="M 70 242 L 70 304" stroke="#3fb950" stroke-width="1.5" fill="none" marker-end="url(#a2g)"/>
-      <text x="78" y="280" font-size="10" fill="#3fb950" font-family="JetBrains Mono,monospace">sync regularly</text>
+      <!-- upstream/development -->
+      <rect x="340" y="40" width="180" height="36" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="430" y="58" text-anchor="middle" font-size="13" fill="#3fb950" font-weight="600">upstream/development</text>
+      <text x="430" y="72" text-anchor="middle" font-size="10" fill="#6e7681">dev server</text>
 
-      <!-- DEVELOPMENT -->
-      <rect x="10" y="306" width="120" height="36" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1"/>
-      <text x="70" y="329" text-anchor="middle" font-size="12" fill="#3fb950" font-weight="600" font-family="JetBrains Mono,monospace">development</text>
-      <text x="70" y="358" text-anchor="middle" font-size="10" fill="#6e7681" font-family="JetBrains Mono,monospace">integration</text>
+      <!-- PR arrow: our fork → upstream/development -->
+      <path d="M 180 58 L 338 58" stroke="#58a6ff" stroke-width="2" fill="none" marker-end="url(#a2b)"/>
+      <text x="258" y="50" text-anchor="middle" font-size="11" fill="#58a6ff">PR (squash &amp; merge)</text>
 
-      <!-- Feature branch A -->
-      <rect x="220" y="306" width="130" height="36" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
-      <text x="285" y="329" text-anchor="middle" font-size="11" fill="#58a6ff" font-family="JetBrains Mono,monospace">feature/auth</text>
+      <!-- upstream/development → upstream/staging -->
+      <line x1="430" y1="76" x2="430" y2="148" stroke="#e3b341" stroke-width="2" fill="none" marker-end="url(#a2y)"/>
+      <text x="442" y="118" font-size="10" fill="#e3b341">PR every 1-2 days</text>
 
-      <!-- Feature branch B -->
-      <rect x="220" y="360" width="130" height="36" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
-      <text x="285" y="383" text-anchor="middle" font-size="11" fill="#58a6ff" font-family="JetBrains Mono,monospace">feature/api</text>
+      <!-- upstream/staging -->
+      <rect x="340" y="150" width="180" height="36" rx="8" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="430" y="168" text-anchor="middle" font-size="13" fill="#e3b341" font-weight="600">upstream/staging</text>
+      <text x="430" y="182" text-anchor="middle" font-size="10" fill="#6e7681">staging server</text>
 
-      <!-- Feature branches → development -->
-      <path d="M 220 324 L 132 324" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2b)"/>
-      <text x="176" y="316" text-anchor="middle" font-size="10" fill="#58a6ff" font-family="JetBrains Mono,monospace">PR (squash)</text>
-      <path d="M 220 378 L 175 355 L 132 336" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2b)"/>
+      <!-- upstream/staging → upstream/prod -->
+      <line x1="430" y1="186" x2="430" y2="258" stroke="#f85149" stroke-width="2" fill="none" marker-end="url(#a2r)"/>
+      <text x="442" y="228" font-size="10" fill="#f85149">PR after QA sign-off</text>
 
-      <!-- development → staging PR -->
-      <path d="M 70 306 L 70 242" stroke="#e3b341" stroke-width="2" fill="none" marker-end="url(#a2y)"/>
+      <!-- upstream/prod -->
+      <rect x="340" y="260" width="180" height="36" rx="8" fill="rgba(248,81,73,0.12)" stroke="#f85149" stroke-width="1.5"/>
+      <text x="430" y="278" text-anchor="middle" font-size="13" fill="#ff7b72" font-weight="600">upstream/prod</text>
+      <text x="430" y="292" text-anchor="middle" font-size="10" fill="#6e7681">production server</text>
 
-      <!-- Labels on right -->
-      <rect x="460" y="26" width="340" height="50" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
-      <text x="480" y="46" font-size="11" fill="#d2a8ff" font-family="JetBrains Mono,monospace">① fetch upstream + rebase (not merge)</text>
-      <text x="480" y="63" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">keeps fork history linear, no extra commits</text>
+      <!-- Annotation cards right side -->
+      <rect x="560" y="40" width="250" height="46" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
+      <text x="575" y="58" font-size="11" fill="#58a6ff">① We push PRs from our fork</text>
+      <text x="575" y="73" font-size="11" fill="#6e7681">feature branch → upstream/development</text>
 
-      <rect x="460" y="96" width="340" height="50" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
-      <text x="480" y="116" font-size="11" fill="#e3b341" font-family="JetBrains Mono,monospace">② sync staging with development often</text>
-      <text x="480" y="133" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">daily or every 2 days — no big batches</text>
+      <rect x="560" y="98" width="250" height="46" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
+      <text x="575" y="116" font-size="11" fill="#e3b341">② Team lead merges dev → staging</text>
+      <text x="575" y="131" font-size="11" fill="#6e7681">PR raised on upstream repo</text>
 
-      <rect x="460" y="166" width="340" height="50" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
-      <text x="480" y="186" font-size="11" fill="#58a6ff" font-family="JetBrains Mono,monospace">③ PRs use Squash &amp; Merge</text>
-      <text x="480" y="203" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">one clean commit per feature, readable history</text>
+      <rect x="560" y="157" width="250" height="46" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
+      <text x="575" y="175" font-size="11" fill="#f85149">③ Team lead merges staging → prod</text>
+      <text x="575" y="190" font-size="11" fill="#6e7681">after QA approval</text>
 
-      <rect x="460" y="236" width="340" height="50" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
-      <text x="480" y="256" font-size="11" fill="#3fb950" font-family="JetBrains Mono,monospace">④ feature branches are short-lived</text>
-      <text x="480" y="273" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">branch from development, merge back quickly</text>
+      <rect x="560" y="216" width="250" height="56" rx="8" fill="rgba(248,81,73,0.06)" stroke="rgba(248,81,73,0.2)" stroke-width="1"/>
+      <text x="575" y="234" font-size="11" fill="#ff7b72">④ Debugging on prod?</text>
+      <text x="575" y="250" font-size="11" fill="#6e7681">Sync fork/prod with upstream/prod</text>
+      <text x="575" y="265" font-size="11" fill="#6e7681">Never push from fork/prod!</text>
 
-      <rect x="460" y="306" width="340" height="50" rx="8" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1"/>
-      <text x="480" y="326" font-size="11" fill="#ff7b72" font-family="JetBrains Mono,monospace">⑤ tag releases at promotion checkpoints</text>
-      <text x="480" y="343" font-size="11" fill="#6e7681" font-family="JetBrains Mono,monospace">v1.0, v1.1 — always know what's where</text>
+      <!-- No main branch note -->
+      <rect x="20" y="310" width="300" height="46" rx="8" fill="rgba(255,255,255,0.03)" stroke="var(--border)" stroke-width="1"/>
+      <text x="170" y="330" text-anchor="middle" font-size="12" fill="#e3b341">⚠ We do not use a "main" branch</text>
+      <text x="170" y="348" text-anchor="middle" font-size="11" fill="#6e7681">prod is our source of truth for production</text>
     </svg>
   </div>
+
+  <h3>Who owns what</h3>
+  <table>
+    <tr><th>Branch</th><th>Lives on</th><th>Server</th><th>Who merges into it</th></tr>
+    <tr><td><span class="branch-pill branch-feat" style="font-size:11px;">feature/xyz</span></td><td>Our fork</td><td>Local / CI</td><td>We do — it's our branch</td></tr>
+    <tr><td><span class="branch-pill branch-dev" style="font-size:11px;">upstream/development</span></td><td>Upstream repo</td><td>Dev server</td><td>We open PR from our fork; upstream merges</td></tr>
+    <tr><td><span class="branch-pill branch-staging" style="font-size:11px;">upstream/staging</span></td><td>Upstream repo</td><td>Staging server</td><td>Team lead raises PR from dev; upstream merges</td></tr>
+    <tr><td><span class="branch-pill branch-prod" style="font-size:11px;">upstream/prod</span></td><td>Upstream repo</td><td>Production server</td><td>Team lead raises PR from staging after QA</td></tr>
+  </table>
 </section>
 
 <!-- SECTION 3: SYNC FORK -->
 <section id="sync">
-  <div class="section-label"><div class="section-num">3</div> Fork syncing</div>
-  <h2>The right way to sync your fork</h2>
+  <div class="section-label"><div class="section-num">3</div> Syncing our forks</div>
+  <h2>The right way to sync our forks with upstream</h2>
 
   <div class="alert alert-danger">
     <strong>❌ Never do this</strong>
-    Using GitHub's "Sync Fork" button does a merge under the hood and creates extra commits that pollute your PR history.
+    Using GitHub's "Sync Fork" button does a merge under the hood and creates extra commits that flood our PR history. We never use that button.
   </div>
-
   <div class="alert alert-success">
-    <strong>✅ Do this instead — rebase from upstream</strong>
+    <strong>✅ We always rebase from upstream instead</strong>
   </div>
 
-  <h3>One-time setup (add upstream remote)</h3>
-  <pre><code><span class="cmd-comment"># Run this once after forking</span>
-<span class="cmd-git">git</span> remote add upstream https://github.com/ORIGINAL-OWNER/REPO.git
+  <h3>One-time setup — add the upstream remote</h3>
+  <p>Every team member needs to run this once after forking:</p>
+  <pre><code><span class="cmd-comment"># Add upstream as a remote (run once)</span>
+<span class="cmd-git">git</span> remote add upstream https://github.com/UPSTREAM-ORG/REPO.git
 
-<span class="cmd-comment"># Verify you have both remotes</span>
+<span class="cmd-comment"># Verify we have both remotes</span>
 <span class="cmd-git">git</span> remote -v
-<span class="cmd-comment"># origin    https://github.com/YOUR-NAME/REPO.git (fetch)</span>
-<span class="cmd-comment"># origin    https://github.com/YOUR-NAME/REPO.git (push)</span>
-<span class="cmd-comment"># upstream  https://github.com/ORIGINAL-OWNER/REPO.git (fetch)</span>
-<span class="cmd-comment"># upstream  https://github.com/ORIGINAL-OWNER/REPO.git (push)</span></code></pre>
+<span class="cmd-comment"># origin    https://github.com/YOUR-NAME/REPO.git  (our fork)</span>
+<span class="cmd-comment"># upstream  https://github.com/UPSTREAM-ORG/REPO.git  (the main repo)</span></code></pre>
 
-  <h3>Syncing (do this regularly — not in big batches)</h3>
-  <pre><code><span class="cmd-comment"># 1. Fetch upstream changes (doesn't touch your code yet)</span>
+  <h3>Syncing our fork's development branch (do this regularly)</h3>
+  <pre><code><span class="cmd-comment"># 1. Fetch upstream changes — this doesn't touch our code yet</span>
 <span class="cmd-git">git</span> fetch upstream
 
-<span class="cmd-comment"># 2. Switch to your main branch</span>
-<span class="cmd-git">git</span> checkout main
+<span class="cmd-comment"># 2. Switch to our fork's development branch</span>
+<span class="cmd-git">git</span> checkout development
 
-<span class="cmd-comment"># 3. REBASE (not merge!) onto upstream/main</span>
-<span class="cmd-git">git</span> rebase upstream/main
+<span class="cmd-comment"># 3. Rebase onto upstream/development (NOT merge)</span>
+<span class="cmd-git">git</span> rebase upstream/development
 
-<span class="cmd-comment"># 4. Push to your fork (force-push is OK here since we rebased)</span>
-<span class="cmd-git">git</span> push origin main --force-with-lease</code></pre>
+<span class="cmd-comment"># 4. Push to our fork — force-with-lease is safe after rebase</span>
+<span class="cmd-git">git</span> push origin development --force-with-lease</code></pre>
 
   <div class="alert alert-warning">
     <strong>⚠️ First time syncing after using "Sync Fork" button</strong>
-    Your history is already messy. You'll need to do a one-time reset: <span class="inline-code">git reset --hard upstream/main</span> then force push. This is safe because your feature work is in separate branches — main should always mirror upstream.
-  </div>
-
-  <h3>After rebasing main — propagate to staging and development</h3>
-  <pre><code><span class="cmd-comment"># Bring staging up to date</span>
-<span class="cmd-git">git</span> checkout staging
-<span class="cmd-git">git</span> rebase main   <span class="cmd-comment"># or: git merge main</span>
-<span class="cmd-git">git</span> push origin staging
-
-<span class="cmd-comment"># Bring development up to date</span>
+    If we've already used the button and made a mess, do a one-time reset — this is safe because our feature work lives in separate branches, not on development directly.
+    <pre style="margin-top:12px;"><code><span class="cmd-git">git</span> fetch upstream
 <span class="cmd-git">git</span> checkout development
-<span class="cmd-git">git</span> rebase staging
-<span class="cmd-git">git</span> push origin development</code></pre>
+<span class="cmd-git">git</span> reset --hard upstream/development
+<span class="cmd-git">git</span> push origin development --force-with-lease</code></pre>
+  </div>
 </section>
 
 <!-- SECTION 4: PR FLOW -->
 <section id="pr-flow">
   <div class="section-label"><div class="section-num">4</div> PR flow</div>
-  <h2>The complete pull request flow</h2>
+  <h2>Our full pull request flow — fork to upstream/development</h2>
 
   <div class="diagram-wrap">
-    <div class="diagram-title">PR lifecycle — from feature to production</div>
-    <svg width="100%" viewBox="0 0 820 540" xmlns="http://www.w3.org/2000/svg">
+    <div class="diagram-title">PR lifecycle — feature branch to upstream/development</div>
+    <svg width="100%" viewBox="0 0 820 530" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b949e" stroke-width="1.5"/></marker>
         <marker id="a3g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#3fb950" stroke-width="1.5"/></marker>
         <marker id="a3b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#58a6ff" stroke-width="1.5"/></marker>
-        <marker id="a3y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#e3b341" stroke-width="1.5"/></marker>
         <marker id="a3r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#f85149" stroke-width="1.5"/></marker>
       </defs>
-
-      <!-- Step boxes, top to bottom -->
-      <!-- 1: Create branch -->
-      <rect x="260" y="20" width="200" height="50" rx="10" fill="rgba(88,166,255,0.12)" stroke="#58a6ff" stroke-width="1.5"/>
-      <text x="360" y="40" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600" font-family="JetBrains Mono,monospace">① Create feature branch</text>
-      <text x="360" y="57" text-anchor="middle" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">from development</text>
-      <line x1="360" y1="70" x2="360" y2="108" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
-
-      <!-- 2: Work -->
-      <rect x="260" y="110" width="200" height="50" rx="10" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
-      <text x="360" y="130" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600" font-family="JetBrains Mono,monospace">② Commit your work</text>
-      <text x="360" y="147" text-anchor="middle" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">as many commits as you like</text>
-      <line x1="360" y1="160" x2="360" y2="198" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
-
-      <!-- 3: Open PR -->
-      <rect x="260" y="200" width="200" height="50" rx="10" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
-      <text x="360" y="220" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600" font-family="JetBrains Mono,monospace">③ Open PR</text>
-      <text x="360" y="237" text-anchor="middle" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">feature → development</text>
-      <line x1="360" y1="250" x2="360" y2="288" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
-
-      <!-- 4: Review -->
-      <rect x="260" y="290" width="200" height="50" rx="10" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
-      <text x="360" y="310" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600" font-family="JetBrains Mono,monospace">④ Code review</text>
-      <text x="360" y="327" text-anchor="middle" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">at least 1 approval</text>
-
-      <!-- Decision: approved? -->
-      <line x1="360" y1="340" x2="360" y2="378" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
-      <polygon points="360,380 400,420 360,460 320,420" fill="rgba(30,36,45,0.8)" stroke="#30363d" stroke-width="1.5"/>
-      <text x="360" y="415" text-anchor="middle" font-size="12" fill="#c9d1d9" font-family="JetBrains Mono,monospace">Approved?</text>
-      <text x="360" y="430" text-anchor="middle" font-size="10" fill="#6e7681" font-family="JetBrains Mono,monospace">changes requested</text>
-
-      <!-- No → back to commit -->
-      <path d="M 320 420 L 200 420 L 200 135 L 260 135" stroke="#f85149" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#a3r)"/>
-      <text x="155" y="416" font-size="10" fill="#f85149" font-family="JetBrains Mono,monospace">No → fix</text>
-
+      <!-- 1 -->
+      <rect x="260" y="20" width="220" height="52" rx="10" fill="rgba(210,168,255,0.1)" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="370" y="41" text-anchor="middle" font-size="13" fill="#d2a8ff" font-weight="600">① Sync our fork first</text>
+      <text x="370" y="58" text-anchor="middle" font-size="11" fill="#8b949e">git fetch upstream + rebase</text>
+      <line x1="370" y1="72" x2="370" y2="108" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
+      <!-- 2 -->
+      <rect x="260" y="110" width="220" height="52" rx="10" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="370" y="131" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600">② Create feature branch</text>
+      <text x="370" y="148" text-anchor="middle" font-size="11" fill="#8b949e">from our fork/development</text>
+      <line x1="370" y1="162" x2="370" y2="198" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
+      <!-- 3 -->
+      <rect x="260" y="200" width="220" height="52" rx="10" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="370" y="221" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600">③ Commit our work</text>
+      <text x="370" y="238" text-anchor="middle" font-size="11" fill="#8b949e">WIP commits are fine here</text>
+      <line x1="370" y1="252" x2="370" y2="288" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
+      <!-- 4 -->
+      <rect x="260" y="290" width="220" height="52" rx="10" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="370" y="311" text-anchor="middle" font-size="13" fill="#58a6ff" font-weight="600">④ Open PR on GitHub</text>
+      <text x="370" y="328" text-anchor="middle" font-size="11" fill="#8b949e">our fork → upstream/development</text>
+      <line x1="370" y1="342" x2="370" y2="378" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a3)"/>
+      <!-- 5: decision -->
+      <polygon points="370,380 415,420 370,460 325,420" fill="rgba(30,36,45,0.9)" stroke="#30363d" stroke-width="1.5"/>
+      <text x="370" y="416" text-anchor="middle" font-size="12" fill="#c9d1d9">Approved?</text>
+      <text x="370" y="431" text-anchor="middle" font-size="10" fill="#6e7681">≥1 reviewer</text>
+      <!-- No → fix -->
+      <path d="M 325 420 L 200 420 L 200 225 L 260 225" stroke="#f85149" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#a3r)"/>
+      <text x="150" y="416" font-size="10" fill="#f85149">No → fix</text>
       <!-- Yes → squash merge -->
-      <line x1="400" y1="420" x2="500" y2="420" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a3g)"/>
-      <text x="450" y="412" text-anchor="middle" font-size="10" fill="#3fb950" font-family="JetBrains Mono,monospace">Yes</text>
-
-      <!-- 5: Squash merge -->
-      <rect x="500" y="395" width="200" height="50" rx="10" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.5"/>
-      <text x="600" y="415" text-anchor="middle" font-size="13" fill="#3fb950" font-weight="600" font-family="JetBrains Mono,monospace">⑤ Squash &amp; Merge</text>
-      <text x="600" y="432" text-anchor="middle" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">into development</text>
-
-      <!-- Squash box annotation -->
-      <rect x="500" y="465" width="200" height="50" rx="8" fill="rgba(63,185,80,0.06)" stroke="rgba(63,185,80,0.3)" stroke-width="1"/>
-      <text x="600" y="485" text-anchor="middle" font-size="11" fill="#3fb950" font-family="JetBrains Mono,monospace">50 commits → 1 commit</text>
-      <text x="600" y="502" text-anchor="middle" font-size="11" fill="#8b949e" font-family="JetBrains Mono,monospace">"feat: add auth module"</text>
+      <line x1="415" y1="420" x2="520" y2="420" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a3g)"/>
+      <text x="466" y="412" text-anchor="middle" font-size="10" fill="#3fb950">Yes</text>
+      <!-- squash box -->
+      <rect x="520" y="395" width="210" height="52" rx="10" fill="rgba(63,185,80,0.12)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="625" y="416" text-anchor="middle" font-size="13" fill="#3fb950" font-weight="600">⑤ Squash &amp; Merge</text>
+      <text x="625" y="433" text-anchor="middle" font-size="11" fill="#8b949e">into upstream/development</text>
+      <rect x="520" y="462" width="210" height="46" rx="8" fill="rgba(63,185,80,0.05)" stroke="rgba(63,185,80,0.3)" stroke-width="1"/>
+      <text x="625" y="481" text-anchor="middle" font-size="11" fill="#3fb950">all commits → 1 clean commit</text>
+      <text x="625" y="497" text-anchor="middle" font-size="11" fill="#8b949e">"feat: add auth module (#42)"</text>
     </svg>
   </div>
 
@@ -622,246 +496,407 @@
   <div class="steps">
     <div class="step">
       <div class="step-content">
-        <h4>Create your feature branch</h4>
-        <p>Always branch from <span class="inline-code">development</span>, never from staging or main.</p>
+        <h4>Sync our fork before starting any work</h4>
+        <p>We always do this first — it keeps our fork up to date before we branch off.</p>
+        <pre><code><span class="cmd-git">git</span> fetch upstream
+<span class="cmd-git">git</span> checkout development
+<span class="cmd-git">git</span> rebase upstream/development
+<span class="cmd-git">git</span> push origin development --force-with-lease</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-content">
+        <h4>Create our feature branch</h4>
+        <p>Always branch from <span class="inline-code">development</span> — never from staging or prod.</p>
         <pre><code><span class="cmd-git">git</span> checkout development
-<span class="cmd-git">git</span> pull origin development
 <span class="cmd-git">git</span> checkout -b feature/your-feature-name</code></pre>
       </div>
     </div>
     <div class="step">
       <div class="step-content">
-        <h4>Do your work and commit freely</h4>
-        <p>WIP commits are fine here — they'll be squashed later.</p>
+        <h4>Do our work and commit freely</h4>
+        <p>WIP commits are totally fine — they'll be squashed into one commit when the PR merges.</p>
         <pre><code><span class="cmd-git">git</span> add .
-<span class="cmd-git">git</span> commit -m "WIP: setting up auth structure"
-<span class="cmd-comment"># ... keep working ...</span>
-<span class="cmd-git">git</span> commit -m "WIP: add JWT validation"</code></pre>
+<span class="cmd-git">git</span> commit -m "WIP: scaffold auth structure"
+<span class="cmd-git">git</span> commit -m "WIP: add JWT validation logic"</code></pre>
       </div>
     </div>
     <div class="step">
       <div class="step-content">
-        <h4>Push and open a PR</h4>
-        <p>PR goes from <span class="inline-code">feature/xyz</span> → <span class="inline-code">development</span> (on the upstream repo).</p>
+        <h4>Push our branch and open a PR</h4>
+        <p>We push to <strong>our fork</strong>, then open the PR targeting <strong>upstream/development</strong> — not our fork's development.</p>
         <pre><code><span class="cmd-git">git</span> push origin feature/your-feature-name
-<span class="cmd-comment"># Then open PR on GitHub: feature branch → upstream/development</span></code></pre>
+
+<span class="cmd-comment"># On GitHub: open PR from</span>
+<span class="cmd-comment"># YOUR-FORK/feature/your-feature-name → UPSTREAM/development</span></code></pre>
       </div>
     </div>
     <div class="step">
       <div class="step-content">
-        <h4>Squash & Merge (IMPORTANT)</h4>
-        <p>When merging the PR, always select <strong>Squash and merge</strong> in GitHub's dropdown. Write a good commit message like: <span class="inline-code">feat: add JWT auth module (#42)</span></p>
+        <h4>Use Squash &amp; Merge — always</h4>
+        <p>In GitHub's merge dropdown, we always select <strong>"Squash and merge"</strong>. Write a proper commit message:<br><span class="inline-code">feat: add JWT auth module (#42)</span></p>
       </div>
     </div>
     <div class="step">
       <div class="step-content">
-        <h4>Sync development → staging (regularly!)</h4>
-        <p>Don't let them drift. Do this every 1–2 days or after every significant feature lands.</p>
-        <pre><code><span class="cmd-git">git</span> checkout staging
-<span class="cmd-git">git</span> merge development   <span class="cmd-comment"># or use a PR</span>
-<span class="cmd-git">git</span> push origin staging</code></pre>
+        <h4>Delete the feature branch after merging</h4>
+        <pre><code><span class="cmd-comment"># GitHub shows a "Delete branch" button — click it</span>
+<span class="cmd-comment"># Or from terminal:</span>
+<span class="cmd-git">git</span> push origin --delete feature/your-feature-name
+<span class="cmd-git">git</span> branch -d feature/your-feature-name</code></pre>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SECTION 5: RULES -->
+<!-- SECTION 5: PROMOTING TO STAGING AND PROD -->
+<section id="promote">
+  <div class="section-label"><div class="section-num">5</div> Promoting to staging &amp; prod</div>
+  <h2>How we promote: development → staging → prod</h2>
+  <p>This is handled via PRs on the upstream repo — usually by the team lead or whoever owns the deployment. We <strong>never push directly</strong> to upstream/staging or upstream/prod.</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">Promotion flow — three environments</div>
+    <svg width="100%" viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b949e" stroke-width="1.5"/></marker>
+        <marker id="a4y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#e3b341" stroke-width="1.5"/></marker>
+        <marker id="a4r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#f85149" stroke-width="1.5"/></marker>
+      </defs>
+      <!-- development box -->
+      <rect x="20" y="60" width="200" height="60" rx="10" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="120" y="85" text-anchor="middle" font-size="14" fill="#3fb950" font-weight="600">upstream/development</text>
+      <text x="120" y="103" text-anchor="middle" font-size="11" fill="#6e7681">Dev server — latest integrated code</text>
+      <!-- arrow -->
+      <line x1="220" y1="90" x2="298" y2="90" stroke="#e3b341" stroke-width="2" marker-end="url(#a4y)"/>
+      <text x="259" y="82" text-anchor="middle" font-size="10" fill="#e3b341">PR every 1-2 days</text>
+      <!-- staging box -->
+      <rect x="300" y="60" width="200" height="60" rx="10" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="400" y="85" text-anchor="middle" font-size="14" fill="#e3b341" font-weight="600">upstream/staging</text>
+      <text x="400" y="103" text-anchor="middle" font-size="11" fill="#6e7681">Staging server — QA sign-off here</text>
+      <!-- arrow -->
+      <line x1="500" y1="90" x2="578" y2="90" stroke="#f85149" stroke-width="2" marker-end="url(#a4r)"/>
+      <text x="539" y="82" text-anchor="middle" font-size="10" fill="#f85149">PR after QA</text>
+      <!-- prod box -->
+      <rect x="580" y="60" width="200" height="60" rx="10" fill="rgba(248,81,73,0.12)" stroke="#f85149" stroke-width="1.5"/>
+      <text x="680" y="85" text-anchor="middle" font-size="14" fill="#ff7b72" font-weight="600">upstream/prod</text>
+      <text x="680" y="103" text-anchor="middle" font-size="11" fill="#6e7681">Production server</text>
+      <!-- labels below -->
+      <text x="120" y="150" text-anchor="middle" font-size="11" fill="#3fb950">Merges in often</text>
+      <text x="120" y="165" text-anchor="middle" font-size="11" fill="#6e7681">Multiple times a day</text>
+      <text x="400" y="150" text-anchor="middle" font-size="11" fill="#e3b341">Stable, tested</text>
+      <text x="400" y="165" text-anchor="middle" font-size="11" fill="#6e7681">QA must approve before prod</text>
+      <text x="680" y="150" text-anchor="middle" font-size="11" fill="#ff7b72">Controlled, tagged</text>
+      <text x="680" y="165" text-anchor="middle" font-size="11" fill="#6e7681">Promote with a version tag</text>
+    </svg>
+  </div>
+
+  <h3>Promoting development → staging</h3>
+  <p>This is a PR on the upstream repo. The team lead or release owner does this every 1–2 days — or whenever a meaningful batch of features has landed on development.</p>
+  <pre><code><span class="cmd-comment"># Team lead: raise a PR on the upstream repo</span>
+<span class="cmd-comment"># Base: upstream/staging ← Compare: upstream/development</span>
+<span class="cmd-comment"># Title: "Promote development to staging - YYYY-MM-DD"</span>
+<span class="cmd-comment"># Use squash merge here too</span>
+
+<span class="cmd-comment"># After the PR merges, tag it:</span>
+<span class="cmd-git">git</span> fetch upstream
+<span class="cmd-git">git</span> checkout staging
+<span class="cmd-git">git</span> pull upstream staging
+<span class="cmd-git">git</span> tag staging-2026-04-02
+<span class="cmd-git">git</span> push upstream staging-2026-04-02</code></pre>
+
+  <h3>Promoting staging → prod (after QA sign-off)</h3>
+  <pre><code><span class="cmd-comment"># Team lead: raise a PR on the upstream repo</span>
+<span class="cmd-comment"># Base: upstream/prod ← Compare: upstream/staging</span>
+<span class="cmd-comment"># Title: "Release v1.4.0"</span>
+<span class="cmd-comment"># Requires QA approval in the PR before merging</span>
+
+<span class="cmd-comment"># After the PR merges, tag the release:</span>
+<span class="cmd-git">git</span> fetch upstream
+<span class="cmd-git">git</span> tag v1.4.0 upstream/prod
+<span class="cmd-git">git</span> push upstream v1.4.0</code></pre>
+
+  <div class="alert alert-warning">
+    <strong>⚠️ Never let staging lag development by more than 3 days</strong>
+    The longer we wait, the more commits pile up and the harder it is to review what's changing. Small frequent promotions are much safer than big batches.
+  </div>
+</section>
+
+<!-- SECTION 6: PROD SYNC -->
+<section id="prod-sync">
+  <div class="section-label"><div class="section-num red">6</div> Prod branch sync</div>
+  <h2>Keeping our fork's prod branch in sync — and debugging on prod</h2>
+  <p>Sometimes we need to check out the prod branch on our fork to investigate a live issue. Our fork's prod branch is <strong>read-only and never pushed from</strong> — it exists purely so we can inspect what's running in production locally.</p>
+
+  <div class="prod-callout">
+    <h4>🔴 The golden rule for fork/prod</h4>
+    <p style="color:#c9d1d9;margin:0;">We <strong>never commit to or push from our fork's prod branch</strong>. We only pull it in sync with upstream/prod. Any fixes we discover while inspecting prod go into a feature branch off development — never direct commits to prod.</p>
+  </div>
+
+  <h3>Setting up tracking for upstream/prod (one-time)</h3>
+  <pre><code><span class="cmd-comment"># Make sure we have the upstream remote</span>
+<span class="cmd-git">git</span> fetch upstream
+
+<span class="cmd-comment"># Create our local prod branch tracking upstream/prod</span>
+<span class="cmd-git">git</span> checkout --track upstream/prod -b prod
+
+<span class="cmd-comment"># Verify it's tracking upstream</span>
+<span class="cmd-git">git</span> branch -vv
+<span class="cmd-comment"># Should show: prod ... [upstream/prod]</span></code></pre>
+
+  <h3>Syncing fork/prod before any debugging session</h3>
+  <p>Every time we want to look at prod, we sync first — otherwise we're looking at stale code.</p>
+  <pre><code><span class="cmd-comment"># Always do this before checking prod</span>
+<span class="cmd-git">git</span> fetch upstream
+
+<span class="cmd-comment"># Hard reset our local prod to match upstream/prod exactly</span>
+<span class="cmd-git">git</span> checkout prod
+<span class="cmd-git">git</span> reset --hard upstream/prod
+
+<span class="cmd-comment"># Confirm we're in sync</span>
+<span class="cmd-git">git</span> log --oneline -5
+<span class="cmd-comment"># Should match what's on the upstream/prod branch</span></code></pre>
+
+  <h3>Checking the diff between prod and staging</h3>
+  <pre><code><span class="cmd-comment"># What's on staging that hasn't hit prod yet?</span>
+<span class="cmd-git">git</span> log upstream/prod..upstream/staging --oneline
+
+<span class="cmd-comment"># What's the actual code diff?</span>
+<span class="cmd-git">git</span> diff upstream/prod..upstream/staging
+
+<span class="cmd-comment"># What's on dev that hasn't hit staging yet?</span>
+<span class="cmd-git">git</span> log upstream/staging..upstream/development --oneline</code></pre>
+
+  <h3>If we find a bug while on prod — what to do</h3>
+  <div class="diagram-wrap">
+    <div class="diagram-title">Prod bug investigation flow</div>
+    <svg width="100%" viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b949e" stroke-width="1.5"/></marker>
+        <marker id="a5b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#58a6ff" stroke-width="1.5"/></marker>
+      </defs>
+      <!-- Step 1 -->
+      <rect x="10" y="50" width="160" height="56" rx="8" fill="rgba(248,81,73,0.08)" stroke="#f85149" stroke-width="1"/>
+      <text x="90" y="72" text-anchor="middle" font-size="12" fill="#ff7b72" font-weight="600">Spot bug on prod</text>
+      <text x="90" y="89" text-anchor="middle" font-size="11" fill="#6e7681">inspecting our fork/prod</text>
+      <text x="90" y="104" text-anchor="middle" font-size="11" fill="#6e7681">(in sync with upstream)</text>
+      <line x1="170" y1="78" x2="198" y2="78" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a5)"/>
+      <!-- Step 2 -->
+      <rect x="200" y="50" width="160" height="56" rx="8" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="280" y="72" text-anchor="middle" font-size="12" fill="#58a6ff" font-weight="600">Switch to development</text>
+      <text x="280" y="89" text-anchor="middle" font-size="11" fill="#6e7681">git checkout development</text>
+      <text x="280" y="104" text-anchor="middle" font-size="11" fill="#6e7681">sync with upstream first</text>
+      <line x1="360" y1="78" x2="388" y2="78" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a5)"/>
+      <!-- Step 3 -->
+      <rect x="390" y="50" width="160" height="56" rx="8" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="470" y="72" text-anchor="middle" font-size="12" fill="#58a6ff" font-weight="600">Create fix branch</text>
+      <text x="470" y="89" text-anchor="middle" font-size="11" fill="#6e7681">fix/prod-issue-desc</text>
+      <text x="470" y="104" text-anchor="middle" font-size="11" fill="#6e7681">from development</text>
+      <line x1="550" y1="78" x2="578" y2="78" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a5)"/>
+      <!-- Step 4 -->
+      <rect x="580" y="50" width="160" height="56" rx="8" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="1"/>
+      <text x="660" y="72" text-anchor="middle" font-size="12" fill="#3fb950" font-weight="600">PR → upstream/dev</text>
+      <text x="660" y="89" text-anchor="middle" font-size="11" fill="#6e7681">normal PR flow</text>
+      <text x="660" y="104" text-anchor="middle" font-size="11" fill="#6e7681">then promote to prod</text>
+      <!-- Never label -->
+      <rect x="10" y="130" width="360" height="32" rx="6" fill="rgba(248,81,73,0.06)" stroke="rgba(248,81,73,0.2)" stroke-width="1"/>
+      <text x="190" y="150" text-anchor="middle" font-size="12" fill="#ff7b72">🚫 Never: git commit on prod / git push from prod</text>
+    </svg>
+  </div>
+
+  <pre><code><span class="cmd-comment"># We found a bug. Here's what we do:</span>
+
+<span class="cmd-comment"># 1. Note exactly what file/line we found the issue on prod</span>
+<span class="cmd-git">git</span> log --oneline -3    <span class="cmd-comment"># note the commit hash for reference</span>
+
+<span class="cmd-comment"># 2. Switch back to development and sync it</span>
+<span class="cmd-git">git</span> checkout development
+<span class="cmd-git">git</span> fetch upstream
+<span class="cmd-git">git</span> rebase upstream/development
+
+<span class="cmd-comment"># 3. Create a fix branch from development</span>
+<span class="cmd-git">git</span> checkout -b fix/null-pointer-user-service
+
+<span class="cmd-comment"># 4. Apply the fix, commit, and open a normal PR to upstream/development</span>
+<span class="cmd-git">git</span> commit -m "fix: resolve null pointer in user service"
+<span class="cmd-git">git</span> push origin fix/null-pointer-user-service
+
+<span class="cmd-comment"># 5. After it merges to development, the team lead fast-tracks it</span>
+<span class="cmd-comment"># through staging → prod (same PR promotion process, just faster)</span></code></pre>
+
+  <div class="alert alert-info">
+    <strong>💡 For critical hotfixes that can't wait for the normal dev → staging → prod flow</strong>
+    Talk to the team lead. They can raise an emergency PR directly from a hotfix branch to staging → prod, bypassing development. This is the exception, not the rule — and still requires a review.
+  </div>
+</section>
+
+<!-- SECTION 7: RULES -->
 <section id="rules">
-  <div class="section-label"><div class="section-num">5</div> Team rules</div>
-  <h2>Rules every team member must follow</h2>
+  <div class="section-label"><div class="section-num">7</div> Team rules</div>
+  <h2>Rules we all follow</h2>
 
   <div class="rules-grid">
     <div class="rule-card do">
-      <div class="rule-header">✅ Do</div>
-      <div class="rule-item"><span class="rule-icon">🔀</span> Squash & Merge all PRs into development</div>
-      <div class="rule-item"><span class="rule-icon">🔄</span> Sync fork via rebase (never "Sync Fork" button)</div>
-      <div class="rule-item"><span class="rule-icon">📅</span> Merge development → staging every 1–2 days</div>
-      <div class="rule-item"><span class="rule-icon">🌿</span> Branch from development for all features</div>
-      <div class="rule-item"><span class="rule-icon">🏷️</span> Tag releases with v1.x when promoting to main</div>
-      <div class="rule-item"><span class="rule-icon">✍️</span> Write meaningful squash commit messages</div>
+      <div class="rule-header">✅ We do</div>
+      <div class="rule-item"><span class="rule-icon">🔀</span> Squash &amp; Merge all PRs into upstream/development</div>
+      <div class="rule-item"><span class="rule-icon">🔄</span> Sync our forks via rebase, never the "Sync Fork" button</div>
+      <div class="rule-item"><span class="rule-icon">📅</span> Promote development → staging every 1–2 days</div>
+      <div class="rule-item"><span class="rule-icon">🌿</span> Branch from development for all features and fixes</div>
+      <div class="rule-item"><span class="rule-icon">🏷️</span> Tag releases when we promote to prod (v1.x.0)</div>
+      <div class="rule-item"><span class="rule-icon">✍️</span> Write clear squash commit messages (feat/fix/chore: ...)</div>
+      <div class="rule-item"><span class="rule-icon">🔴</span> Sync fork/prod before any debugging session on prod</div>
+      <div class="rule-item"><span class="rule-icon">🗑️</span> Delete our feature branch after it merges</div>
     </div>
     <div class="rule-card dont">
-      <div class="rule-header">❌ Don't</div>
-      <div class="rule-item"><span class="rule-icon">🚫</span> Never use GitHub "Sync Fork" button</div>
-      <div class="rule-item"><span class="rule-icon">🚫</span> Never commit directly to staging or main</div>
-      <div class="rule-item"><span class="rule-icon">🚫</span> Never let staging lag development by > 3 days</div>
-      <div class="rule-item"><span class="rule-icon">🚫</span> Never use "Create a merge commit" in PR dropdown</div>
-      <div class="rule-item"><span class="rule-icon">🚫</span> Never keep feature branches open for > 1 week</div>
-      <div class="rule-item"><span class="rule-icon">🚫</span> Never force push to shared branches (staging/main)</div>
+      <div class="rule-header">❌ We never do</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Use GitHub's "Sync Fork" button — ever</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Commit or push directly to upstream/staging or upstream/prod</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Push anything from our fork/prod branch</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Use "Create a merge commit" in the PR merge dropdown</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Let staging lag development by more than 3 days</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Keep feature branches open for more than 1 week</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Branch features from staging or prod</div>
+      <div class="rule-item"><span class="rule-icon">🚫</span> Force push to upstream/development, staging, or prod</div>
     </div>
   </div>
 
   <h3>Commit message format</h3>
-  <p>Use conventional commits for squash messages — this makes the changelog readable:</p>
+  <p>We use conventional commits for our squash messages — it makes the changelog automatic and readable:</p>
   <pre><code><span class="cmd-val">feat</span>: add JWT authentication module (#42)
 <span class="cmd-val">fix</span>: correct null pointer in user service (#51)
 <span class="cmd-val">chore</span>: update dependencies to latest (#55)
 <span class="cmd-val">docs</span>: update README setup instructions (#48)
 <span class="cmd-val">refactor</span>: extract payment logic into service (#60)
-<span class="cmd-warn">BREAKING CHANGE</span>: rename /api/v1 to /api/v2</code></pre>
+<span class="cmd-warn">BREAKING CHANGE</span>: rename /api/v1 to /api/v2 (#70)</code></pre>
 
-  <h3>GitHub settings to enforce these rules</h3>
-  <p>Ask your repo admin to configure these settings on the upstream repo:</p>
-
+  <h3>GitHub settings to enforce our rules (upstream repo)</h3>
   <table>
-    <tr>
-      <th>Setting</th>
-      <th>Where</th>
-      <th>Value</th>
-    </tr>
-    <tr>
-      <td>Allow squash merging</td>
-      <td>Settings → General → Pull Requests</td>
-      <td>✅ Enabled</td>
-    </tr>
-    <tr>
-      <td>Allow merge commits</td>
-      <td>Settings → General → Pull Requests</td>
-      <td>❌ Disabled</td>
-    </tr>
-    <tr>
-      <td>Allow rebase merging</td>
-      <td>Settings → General → Pull Requests</td>
-      <td>❌ Disabled (optional)</td>
-    </tr>
-    <tr>
-      <td>Require PR reviews</td>
-      <td>Settings → Branches → Branch rules</td>
-      <td>✅ 1 approval minimum</td>
-    </tr>
-    <tr>
-      <td>Require branches to be up to date</td>
-      <td>Settings → Branches → Branch rules</td>
-      <td>✅ Enabled</td>
-    </tr>
-    <tr>
-      <td>Delete branches after merge</td>
-      <td>Settings → General → Pull Requests</td>
-      <td>✅ Enabled</td>
-    </tr>
+    <tr><th>Setting</th><th>Where</th><th>Value</th></tr>
+    <tr><td>Allow squash merging</td><td>Settings → General → Pull Requests</td><td>✅ Enabled</td></tr>
+    <tr><td>Allow merge commits</td><td>Settings → General → Pull Requests</td><td>❌ Disabled</td></tr>
+    <tr><td>Allow rebase merging</td><td>Settings → General → Pull Requests</td><td>❌ Disabled</td></tr>
+    <tr><td>Require PR reviews</td><td>Settings → Branches → Branch rules</td><td>✅ 1 approval minimum</td></tr>
+    <tr><td>Protect upstream/staging and upstream/prod</td><td>Settings → Branches → Branch rules</td><td>✅ No direct pushes</td></tr>
+    <tr><td>Require branches to be up to date</td><td>Settings → Branches → Branch rules</td><td>✅ Enabled</td></tr>
+    <tr><td>Delete branches after merge</td><td>Settings → General → Pull Requests</td><td>✅ Enabled</td></tr>
   </table>
 </section>
 
-<!-- SECTION 6: CHECKLIST -->
+<!-- SECTION 8: CHECKLIST -->
 <section id="pr-checklist">
-  <div class="section-label"><div class="section-num">6</div> Checklist</div>
-  <h2>PR checklist (interactive)</h2>
-  <p>Use this before submitting any PR. Click each item to mark it complete.</p>
+  <div class="section-label"><div class="section-num">8</div> Checklist</div>
+  <h2>Our PR checklist — tick before we submit</h2>
 
   <ul class="checklist" id="checklist">
-    <li onclick="toggle(this)"><div class="check-box"></div><div>My feature branch was created from <span class="inline-code">development</span> (not staging or main)</div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>I have synced <span class="inline-code">development</span> before opening this PR (<span class="inline-code">git pull origin development</span>)</div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>My PR targets <span class="inline-code">development</span> on the upstream repo (not my fork)</div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>I have no merge conflicts</div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>I will use <strong>Squash and merge</strong> (not "Create a merge commit")</div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>My squash commit message follows conventional commits format: <span class="inline-code">feat: description (#PR)</span></div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>I will delete my feature branch after merge</div></li>
-    <li onclick="toggle(this)"><div class="check-box"></div><div>I have NOT used GitHub's "Sync Fork" button in this workflow</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>We synced our fork with upstream/development before creating this branch (<span class="inline-code">git fetch upstream + git rebase upstream/development</span>)</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>Our feature branch was created from <span class="inline-code">development</span> — not from staging or prod</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>Our PR targets <span class="inline-code">upstream/development</span> — not our fork's development</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>We have no merge conflicts with upstream/development</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>We will use <strong>Squash and merge</strong> — never "Create a merge commit"</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>Our squash commit message uses conventional format: <span class="inline-code">feat/fix/chore: description (#PR)</span></div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>We have at least 1 reviewer approval before merging</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>We will delete our feature branch after the PR merges</div></li>
+    <li onclick="toggle(this)"><div class="check-box"></div><div>We have NOT used the "Sync Fork" button anywhere in this workflow</div></li>
   </ul>
 
-  <div id="progress-bar" style="background:var(--surface2); border-radius:8px; height:8px; margin-top:16px; overflow:hidden;">
-    <div id="progress-fill" style="background:var(--accent2); height:100%; width:0%; border-radius:8px; transition:width 0.3s;"></div>
+  <div id="progress-bar" style="background:var(--surface2);border-radius:8px;height:8px;margin-top:16px;overflow:hidden;">
+    <div id="progress-fill" style="background:var(--accent2);height:100%;width:0%;border-radius:8px;transition:width 0.3s;"></div>
   </div>
-  <p id="progress-text" style="font-size:13px; color:var(--muted); margin-top:8px;">0 of 8 items checked</p>
+  <p id="progress-text" style="font-size:13px;color:var(--muted);margin-top:8px;">0 of 9 items checked</p>
 </section>
 
-<!-- SECTION 7: FAQ -->
+<!-- SECTION 9: FAQ -->
 <section id="faq">
-  <div class="section-label"><div class="section-num">7</div> Troubleshooting</div>
-  <h2>FAQ & troubleshooting</h2>
+  <div class="section-label"><div class="section-num">9</div> Troubleshooting</div>
+  <h2>FAQ &amp; troubleshooting</h2>
 
-  <h3>🔥 My staging PR shows 50 commits. What do I do?</h3>
-  <p>You need a one-time cleanup. First, make sure all feature branches are merged. Then:</p>
-  <pre><code><span class="cmd-comment"># Reset staging to exactly match development</span>
-<span class="cmd-git">git</span> checkout staging
-<span class="cmd-git">git</span> fetch origin
-<span class="cmd-git">git</span> reset --hard origin/development
-<span class="cmd-git">git</span> push origin staging --force-with-lease
-
-<span class="cmd-comment"># Now staging and development are in sync — future PRs will be clean</span></code></pre>
-
-  <div class="alert alert-warning">
-    <strong>⚠️ Coordinate with your team before force-pushing to staging</strong>
-    Tell everyone in Slack: "I'm resetting staging to match development — don't push until I confirm done."
-  </div>
-
-  <h3>🤔 What if I already used "Sync Fork" and made a mess?</h3>
-  <pre><code><span class="cmd-comment"># On your fork's main branch — reset it to upstream</span>
+  <h3>🔥 Our staging PR shows 40–50 commits. What do we do?</h3>
+  <p>We need a one-time cleanup. First make sure all open feature branches are merged, then:</p>
+  <pre><code><span class="cmd-comment"># On the upstream repo — reset staging to match development exactly</span>
 <span class="cmd-git">git</span> fetch upstream
-<span class="cmd-git">git</span> checkout main
-<span class="cmd-git">git</span> reset --hard upstream/main
-<span class="cmd-git">git</span> push origin main --force-with-lease
+<span class="cmd-git">git</span> checkout staging
+<span class="cmd-git">git</span> reset --hard upstream/development
+<span class="cmd-git">git</span> push upstream staging --force-with-lease
 
-<span class="cmd-comment"># Your feature branches are safe — they're untouched</span>
-<span class="cmd-comment"># Rebase any open feature branches onto the cleaned main</span>
-<span class="cmd-git">git</span> checkout feature/your-branch
-<span class="cmd-git">git</span> rebase origin/main</code></pre>
-
-  <h3>💬 What do I say to the team?</h3>
-  <div class="summary-card">
-    <h3>📢 Message for your team Slack / chat</h3>
-    <pre style="background:transparent; border:none; padding:0; font-size:13px; white-space:pre-wrap; color:#c9d1d9;"><code>Hey team 👋 — quick update on how we handle Git branching going forward.
-
-We've been seeing PRs to staging show 40-50 old commits, which makes it 
-impossible to see what actually changed. Here's what was happening and how 
-we're fixing it:
-
-**The problem:** Using GitHub's "Sync Fork" button creates merge commits that 
-pile up in PR history. Combined with staging drifting from development, PRs 
-become unreadable.
-
-**3 rules we're adopting:**
-
-1. 🔄 Sync fork via `git fetch upstream + git rebase` — NEVER the "Sync Fork" button
-2. 🔀 Always "Squash and merge" PRs (not "Create a merge commit")
-3. 📅 We merge development → staging every 1-2 days, not in big batches
-
-I've shared a full guide with diagrams and commands: [link]
-
-Any questions — drop them here. Happy to pair on the cleanup!</code></pre>
+<span class="cmd-comment"># Staging and development are now in sync</span>
+<span class="cmd-comment"># Future PRs will only show new commits going forward</span></code></pre>
+  <div class="alert alert-warning">
+    <strong>⚠️ Coordinate with the team first</strong>
+    Before force-pushing to upstream/staging, post in the team chat: "Resetting staging to match development — no pushes until I confirm done."
   </div>
 
-  <h3>📋 Quick reference card</h3>
+  <h3>🤔 What if someone already used "Sync Fork" on their fork?</h3>
+  <pre><code><span class="cmd-comment"># Reset our fork's development to match upstream/development</span>
+<span class="cmd-git">git</span> fetch upstream
+<span class="cmd-git">git</span> checkout development
+<span class="cmd-git">git</span> reset --hard upstream/development
+<span class="cmd-git">git</span> push origin development --force-with-lease
+
+<span class="cmd-comment"># Our feature branches are untouched — they're safe</span>
+<span class="cmd-comment"># Rebase any open feature branches onto the clean development</span>
+<span class="cmd-git">git</span> checkout feature/our-branch
+<span class="cmd-git">git</span> rebase origin/development</code></pre>
+
+  <h3>🔴 Our fork/prod is out of date — how do we re-sync it?</h3>
+  <pre><code><span class="cmd-comment"># Fetch the latest from upstream</span>
+<span class="cmd-git">git</span> fetch upstream
+
+<span class="cmd-comment"># Hard reset our local prod to exactly match upstream/prod</span>
+<span class="cmd-git">git</span> checkout prod
+<span class="cmd-git">git</span> reset --hard upstream/prod
+
+<span class="cmd-comment"># Optional: update our fork's remote prod too</span>
+<span class="cmd-git">git</span> push origin prod --force-with-lease
+
+<span class="cmd-comment"># Confirm sync</span>
+<span class="cmd-git">git</span> diff upstream/prod HEAD  <span class="cmd-comment"># should show nothing</span></code></pre>
+
+  <h3>💬 Slack message to share with the team</h3>
+  <div class="summary-card">
+    <h3>📢 Copy and send this to the team</h3>
+    <pre style="background:transparent;border:none;padding:0;font-size:13px;white-space:pre-wrap;color:#c9d1d9;"><code>Hey team 👋 — we're updating how we handle our Git branching.
+
+We've been seeing PRs to staging show 40-50 old commits which makes it 
+impossible to review what actually changed. Here's what was happening 
+and what we're changing:
+
+**The problem:** Using GitHub's "Sync Fork" button creates merge commits 
+that pile up in our PR history. Combined with staging drifting from 
+development, PRs become completely unreadable.
+
+**Our new rules — 3 things to remember:**
+
+1. 🔄 We sync our forks via `git fetch upstream + git rebase` 
+   — NEVER the "Sync Fork" button
+2. 🔀 We always "Squash and merge" PRs (never "Create a merge commit")
+3. 📅 We promote development → staging every 1-2 days (no big batches)
+4. 🔴 Before checking out prod to debug, always run:
+   `git fetch upstream && git reset --hard upstream/prod`
+
+Full guide with diagrams and all the commands is here: [link]
+
+Any questions — drop them here and we'll sort it together!</code></pre>
+  </div>
+
+  <h3>📋 Quick reference</h3>
   <table>
-    <tr>
-      <th>Task</th>
-      <th>Command</th>
-    </tr>
-    <tr>
-      <td>Sync fork with upstream</td>
-      <td><span class="inline-code">git fetch upstream && git rebase upstream/main</span></td>
-    </tr>
-    <tr>
-      <td>Create feature branch</td>
-      <td><span class="inline-code">git checkout development && git checkout -b feature/name</span></td>
-    </tr>
-    <tr>
-      <td>Update from development (mid-feature)</td>
-      <td><span class="inline-code">git fetch origin && git rebase origin/development</span></td>
-    </tr>
-    <tr>
-      <td>Push feature branch</td>
-      <td><span class="inline-code">git push origin feature/name</span></td>
-    </tr>
-    <tr>
-      <td>Sync staging after PR lands</td>
-      <td><span class="inline-code">git checkout staging && git merge development && git push</span></td>
-    </tr>
-    <tr>
-      <td>Tag a release</td>
-      <td><span class="inline-code">git tag v1.2.0 && git push origin v1.2.0</span></td>
-    </tr>
-    <tr>
-      <td>See what's different between branches</td>
-      <td><span class="inline-code">git log development..staging --oneline</span></td>
-    </tr>
+    <tr><th>Task</th><th>Command</th></tr>
+    <tr><td>Sync our fork with upstream</td><td><span class="inline-code">git fetch upstream && git rebase upstream/development</span></td></tr>
+    <tr><td>Create feature branch</td><td><span class="inline-code">git checkout development && git checkout -b feature/name</span></td></tr>
+    <tr><td>Update mid-feature from upstream</td><td><span class="inline-code">git fetch upstream && git rebase upstream/development</span></td></tr>
+    <tr><td>Push our feature branch</td><td><span class="inline-code">git push origin feature/name</span></td></tr>
+    <tr><td>Sync fork/prod before debugging</td><td><span class="inline-code">git checkout prod && git reset --hard upstream/prod</span></td></tr>
+    <tr><td>Check what's pending staging→prod</td><td><span class="inline-code">git log upstream/prod..upstream/staging --oneline</span></td></tr>
+    <tr><td>Check what's pending dev→staging</td><td><span class="inline-code">git log upstream/staging..upstream/development --oneline</span></td></tr>
+    <tr><td>Tag a release on prod</td><td><span class="inline-code">git tag v1.x.0 upstream/prod && git push upstream v1.x.0</span></td></tr>
   </table>
 </section>
-</div>
+
+</div><!-- /container -->
 
 <footer>
-  <p>Git Branching Guide — keep this bookmarked and share with every new team member.</p>
-  <p style="margin-top:8px;">Questions? Drop them in your team chat. Last reviewed: 2026</p>
+  <p>Git Branching Guide — bookmark this and share it with every new team member.</p>
+  <p style="margin-top:8px;">Questions? Drop them in the team chat. Last reviewed: April 2026</p>
 </footer>
 
 <script>
@@ -875,12 +910,12 @@ function updateProgress() {
   const checked = document.querySelectorAll('.check-box.checked').length;
   const pct = (checked / total) * 100;
   document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-text').textContent = checked + ' of ' + total + ' items checked';
   if (checked === total) {
     document.getElementById('progress-text').style.color = '#3fb950';
-    document.getElementById('progress-text').textContent = '✅ All done — ready to merge!';
+    document.getElementById('progress-text').textContent = '✅ All done — ready to submit the PR!';
   } else {
     document.getElementById('progress-text').style.color = '';
+    document.getElementById('progress-text').textContent = checked + ' of ' + total + ' items checked';
   }
 }
 </script>
